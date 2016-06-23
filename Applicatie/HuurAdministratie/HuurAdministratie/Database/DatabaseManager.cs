@@ -117,6 +117,10 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// Alle huurcontracten
+        /// </summary>
+        /// <returns></returns>
         public static List<HuurContract> GetHuurContracten()
         {
             List<HuurContract> tempList = new List<HuurContract>();
@@ -149,6 +153,11 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// De huurder van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         internal static Huurder GetHuurderFromContract(int id)
         {
             Huurder newHuurder = null;
@@ -177,6 +186,11 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// geeft de artikelen van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         internal static List<Artikel> GetArtikelFromContract(int id)
         {
             List<Artikel> tempList = new List<Artikel>();
@@ -205,6 +219,11 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// geeft de boten van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         internal static Boot GetBootFromContract(int id)
         {
             Boot newBoot = null;
@@ -241,6 +260,11 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// vaargebieden van een contract teruggeven
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         internal static List<Vaargebied> GetVaargebiedFromContract(int id)
         {
             List<Vaargebied> tempList = new List<Vaargebied>();
@@ -268,6 +292,10 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// alle mogelijken artikelen
+        /// </summary>
+        /// <returns></returns>
         internal static List<Artikel> GetAllArtikelen()
         {
             List<Artikel> tempList = new List<Artikel>();
@@ -295,6 +323,10 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// alle mogelijken boten
+        /// </summary>
+        /// <returns></returns>
         internal static List<Boot> GetAlleBoten()
         {
             List<Boot> tempList = new List<Boot>();
@@ -330,6 +362,10 @@ namespace HuurAdministratie
             }
         }
 
+        /// <summary>
+        /// alle mogelijke vaargebieden
+        /// </summary>
+        /// <returns></returns>
         internal static List<Vaargebied> GetAllVaargebieden()
         {
             List<Vaargebied> tempList = new List<Vaargebied>();
@@ -349,6 +385,113 @@ namespace HuurAdministratie
             catch (Exception e)
             {
                 throw e;
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// voegt een huurder toe
+        /// </summary>
+        /// <param name="huurContract"></param>
+        /// <returns></returns>
+        internal static bool AddHuurder(HuurContract huurContract)
+        {
+            try
+            {
+                OracleCommand command = CreateOracleCommand("INSERT INTO Huurder(id, naam, emailadres) VALUES (:huurderId, :huurderNaam, :huurderEmail)");
+                command.Parameters.Add(":huurderId", huurContract.Huurder.Id);
+                command.Parameters.Add(":huurderNaam", huurContract.Huurder.Naam);
+                command.Parameters.Add(":huurderEmail", huurContract.Huurder.EmailAdres);
+               
+                return ExecuteNonQuery(command);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Something went wrong: " + exception.Message);
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// voegt een nieuw contract toe
+        /// </summary>
+        /// <param name="huurContract"></param>
+        /// <returns></returns>
+        internal static bool AddHuurcontract(HuurContract huurContract)
+        {
+            try
+            {
+                OracleCommand command = CreateOracleCommand("INSERT INTO Huurcontract(id, bootnaam, huurderId, begindatum, einddatum, aantalmeren, prijs, bedrijfid) VALUES (:huurcontractId, :bootnaam, :huurderId, :beginDatum, :eindDatum, :aantalMeren, :prijs, '0')");
+                command.Parameters.Add(":huurcontractId", huurContract.Id);
+                command.Parameters.Add(":bootNaam", huurContract.Boot.Naam);
+                command.Parameters.Add(":huurderId", huurContract.Huurder.Id);
+                command.Parameters.Add(":beginDatum", huurContract.BeginDatum);
+                command.Parameters.Add(":eindDatum", huurContract.EindDatum);
+                command.Parameters.Add(":aantalMeren", huurContract.AantalMeren);
+                command.Parameters.Add(":prijs", huurContract.Bedrag);
+                return ExecuteNonQuery(command);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Something went wrong: " + exception.Message);
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// voegt de informatie toe van de koppeltablel over vaargebied
+        /// </summary>
+        /// <param name="huurContract"></param>
+        /// <param name="vaargebiedId"></param>
+        /// <returns></returns>
+        internal static bool AddVaargebiedToContract(HuurContract huurContract, int vaargebiedId)
+        {
+            try
+            {
+                OracleCommand command = CreateOracleCommand("INSERT INTO VaargebiedHuurcontract (huurcontractId, vaargebiedId) VALUES (:huurcontractId, :vaargebiedId)");
+                command.Parameters.Add(":huurcontractId", huurContract.Id);
+                command.Parameters.Add(":vaargebiedId", vaargebiedId);
+
+                return ExecuteNonQuery(command);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Something went wrong: " + exception.Message);
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// voegt de informatie in voor de koppeltabel van artikelen
+        /// </summary>
+        /// <param name="huurContract"></param>
+        /// <param name="vaargebiedId"></param>
+        /// <returns></returns>
+        internal static bool AddArtikelenToContract(HuurContract huurContract, int artikelId)
+        {
+            try
+            {
+                OracleCommand command = CreateOracleCommand("INSERT INTO GehuurdeArtikelen (huurcontractId, artikelid) VALUES (:huurcontractId, :artikelId)");
+                command.Parameters.Add(":huurcontractId", huurContract.Id);
+                command.Parameters.Add(":artikelId", artikelId);
+
+                return ExecuteNonQuery(command);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Something went wrong: " + exception.Message);
             }
             finally
             {

@@ -15,6 +15,7 @@ namespace HuurAdministratie.Models
         public Huurder Huurder { get; set; }
         public List<Vaargebied> BevaardeGebieden{ get; set; }
         public Boot Boot { get; set; }
+        public static int highestId = 0;
 
         public HuurContract(int id, DateTime beginDatum, DateTime eindDatum, int aantalMeren, double bedrag, int huurderId)
         {
@@ -25,6 +26,23 @@ namespace HuurAdministratie.Models
             Bedrag = bedrag;
             HuurderId = huurderId;
             BevaardeGebieden = new List<Vaargebied>();
+            if (id > highestId)
+            {
+                highestId = id;
+            }
+        }
+
+        public HuurContract(int id, DateTime beginDatum, DateTime eindDatum, int aantalMeren, double bedrag, List<Artikel> artikelen, Huurder huurder, List<Vaargebied> bevaardeGebieden, Boot boot)
+        {
+            Id = id;
+            BeginDatum = beginDatum;
+            EindDatum = eindDatum;
+            AantalMeren = aantalMeren;
+            Bedrag = bedrag;
+            Artikelen = artikelen;
+            Huurder = huurder;
+            BevaardeGebieden = bevaardeGebieden;
+            Boot = boot;
         }
 
         public string ToString()

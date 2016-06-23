@@ -81,11 +81,81 @@ namespace HuurAdministratie.Models
             return DatabaseManager.GetVaargebiedFromContract(id);
         }
 
-        public void AddHuurcontract()
+        /// <summary>
+        /// Voegt het huurcontract toe aan de database
+        /// </summary>
+        /// <param name="beginDatum"></param>
+        /// <param name="eindDatum"></param>
+        /// <param name="bedrag"></param>
+        /// <param name="vaargebieden"></param>
+        /// <param name="artikelen"></param>
+        /// <param name="boot"></param>
+        /// <param name="naam"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public bool AddHuurcontract(DateTime beginDatum, DateTime eindDatum, double bedrag, List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot, string naam, string email)
         {
-            
+            int aantalMeren = CheckBudget(bedrag, vaargebieden, artikelen, boot);
+            if (aantalMeren != -1)
+            {
+                double teBetalen = PriceCheck(vaargebieden, artikelen, boot, aantalMeren);
+                HuurContract newHuurContract = new HuurContract(HuurContract.highestId + 1, beginDatum, eindDatum,
+                    aantalMeren, teBetalen, artikelen, new Huurder(Huurder.HighestId + 1, naam, email), vaargebieden, boot);
+                bool succes = true;
+                if (!DatabaseManager.AddHuurder(newHuurContract))
+                    succes = false;
+                if (!DatabaseManager.AddHuurcontract(newHuurContract))
+                    succes = false;
+                foreach (Vaargebied vg in vaargebieden)
+                {
+                    if (!DatabaseManager.AddVaargebiedToContract(newHuurContract, vg.Id))
+                        succes = false;
+                }
+                foreach (Artikel a in artikelen)
+                {
+                    if (!DatabaseManager.AddArtikelenToContract(newHuurContract, a.Id))
+                        succes = false;
+                }
+                return succes;
+            }
+            return false;
         }
 
+        /// <summary>
+        /// Geeft de daadwerkelijke prijs die je moet betalen
+        /// </summary>
+        /// <param name="vaargebieden"></param>
+        /// <param name="artikelen"></param>
+        /// <param name="boot"></param>
+        /// <param name="aantalMeren"></param>
+        /// <returns></returns>
+        public double PriceCheck(List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot, int aantalMeren)
+        {
+            double hasToPay = 0;
+            int amountOfMeren = 0;
+            hasToPay += vaargebieden.Count * 2;
+            hasToPay += artikelen.Count * 1.25;
+            hasToPay += boot.Prijs;
+            hasToPay += aantalMeren*1;
+            if (aantalMeren > 4)
+            {
+                hasToPay += 0.50;
+                if (aantalMeren > 10)
+                {
+                    hasToPay += 0.50;
+                }
+            }
+            return hasToPay;
+        }
+
+        /// <summary>
+        /// Geeft het aantal meren terug wat je kunt betalen
+        /// </summary>
+        /// <param name="bedrag"></param>
+        /// <param name="vaargebieden"></param>
+        /// <param name="artikelen"></param>
+        /// <param name="boot"></param>
+        /// <returns>Als het -1 is betekend dat je niet genoeg heb om je andere spullen te betalen</returns>
         public int CheckBudget(double bedrag, List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot)
         {
             double hasToPay = 0;
@@ -108,6 +178,10 @@ namespace HuurAdministratie.Models
                     amountOfMeren++;
                 }
                 amountOfMeren--;
+            }
+            else
+            {
+                return -1;
             }
             return amountOfMeren;
         }

@@ -37,7 +37,18 @@ namespace HuurAdministratie.GUI
         {
             if (CheckBudgetInput())
             {
-                lblAantalMeren.Text = Convert.ToString(bedrijf.CheckBudget(Convert.ToDouble(tbBudget.Text), chosenVaargebied, chosenArtikels, chosenBoot));
+                if (
+                    bedrijf.CheckBudget(Convert.ToDouble(tbBudget.Text), chosenVaargebied, chosenArtikels, chosenBoot) ==
+                    -1)
+                {
+                    MessageBox.Show("Niet genoeg budget voor te huren");
+                }
+                else
+                {
+                    lblAantalMeren.Text =
+                        Convert.ToString(bedrijf.CheckBudget(Convert.ToDouble(tbBudget.Text), chosenVaargebied,
+                            chosenArtikels, chosenBoot));
+                }
             }
         }
 
@@ -166,13 +177,24 @@ namespace HuurAdministratie.GUI
 
         private void button4_Click(object sender, EventArgs e)
         {
-            CheckAllInput();
+            if (CheckAllInput())
+            {
+                if (bedrijf.AddHuurcontract(dtpBeginDatum.Value, dtpEindDatum.Value, Convert.ToDouble(tbBudget.Text),
+                    chosenVaargebied,
+                    chosenArtikels, chosenBoot, tbNaam.Text, tbEmail.Text))
+                {
+                    MessageBox.Show("Contract aangemaakt!");
+                    Form1 beginForm = new Form1();
+                    beginForm.Show();
+                    this.Close();
+                }
+            }
         }
 
         private bool CheckAllInput()
         {
             double budget;
-            if (double.TryParse(tbBudget.Text, out budget))
+            if (double.TryParse(tbBudget.Text, out budget) && tbNaam.Text.Length > 0 && tbEmail.Text.Length > 0)
             {
                 if (dtpBeginDatum.Value >= DateTime.Today || dtpEindDatum.Value >= DateTime.Today)
                 {
@@ -182,8 +204,13 @@ namespace HuurAdministratie.GUI
                         {
                             if (chosenVaargebied.Count == 0)
                             {
-                                
+                                return true;
                             }
+                            MessageBox.Show("Kan niet worden bevaren met gekozen boot.");
+                        }
+                        else
+                        {
+                            return true;
                         }
                     }
                 }
