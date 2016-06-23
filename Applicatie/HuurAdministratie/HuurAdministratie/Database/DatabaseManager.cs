@@ -498,5 +498,25 @@ namespace HuurAdministratie
                 _Connection.Close();
             }
         }
+
+        public static bool AddFullContract(HuurContract contract)
+        {
+            bool succes = true;
+            if (!DatabaseManager.AddHuurder(contract))
+                succes = false;
+            if (!DatabaseManager.AddHuurcontract(contract))
+                succes = false;
+            foreach (Vaargebied vg in contract.BevaardeGebieden)
+            {
+                if (!DatabaseManager.AddVaargebiedToContract(contract, vg.Id))
+                    succes = false;
+            }
+            foreach (Artikel a in contract.Artikelen)
+            {
+                if (!DatabaseManager.AddArtikelenToContract(contract, a.Id))
+                    succes = false;
+            }
+            return succes;
+        }
     }
 }

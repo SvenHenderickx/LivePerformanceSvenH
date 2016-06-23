@@ -17,7 +17,8 @@ namespace HuurAdministratie.GUI
         public AllContracts()
         {
             InitializeComponent();
-            bedrijf = new Bedrijf();
+            bedrijf = Bedrijf.Instance;
+            bedrijf.GetAllForBedrijf();
             GetInfo();
             GiveInfoSelected();
         }
@@ -89,7 +90,7 @@ namespace HuurAdministratie.GUI
             {
                 if (opd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    bedrijf.Exporteer(opd.SelectedPath, bedrijf.HuurContracten[lbContracts.SelectedIndex]);
+                    bedrijf.HuurContracten[lbContracts.SelectedIndex].Exporteer(opd.SelectedPath);
                 }
             }
         }

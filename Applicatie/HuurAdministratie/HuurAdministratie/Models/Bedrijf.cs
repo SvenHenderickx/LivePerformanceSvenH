@@ -21,12 +21,35 @@ namespace HuurAdministratie.Models
         /// Gets the artikelen
         /// </summary>
         public List<Artikel> Artikelen { get; private set; }
-
+        /// <summary>
+        /// gets the accounts
+        /// </summary>
         public List<Account> Accounts { get; private set; }
-
+        /// <summary>
+        /// gets the vaargebieden
+        /// </summary>
         public List<Vaargebied> Vaargebieden { get; private set; }
 
+        private static Bedrijf instance;
+
         public Bedrijf()
+        {
+            GetAllForBedrijf();
+        }
+
+        public static Bedrijf Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Bedrijf();
+                }
+                return instance;
+            }
+        }
+
+        public void GetAllForBedrijf()
         {
             HuurContracten = GetHuurContracten();
             Artikelen = GetArtikelen();
@@ -34,21 +57,37 @@ namespace HuurAdministratie.Models
             Vaargebieden = GetVaargebieden();
         }
 
+        /// <summary>
+        /// Geeft alle vaargebieden
+        /// </summary>
+        /// <returns></returns>
         public List<Vaargebied> GetVaargebieden()
         {
             return DatabaseManager.GetAllVaargebieden();
         }
 
+        /// <summary>
+        /// GEeft alle artikelen
+        /// </summary>
+        /// <returns></returns>
         public List<Artikel> GetArtikelen()
         {
             return DatabaseManager.GetAllArtikelen();
         }
 
+        /// <summary>
+        /// geeft alle boten
+        /// </summary>
+        /// <returns></returns>
         public List<Boot> GetBoten()
         {
             return DatabaseManager.GetAlleBoten();
         }
 
+        /// <summary>
+        /// Geeft alle huurcontracten
+        /// </summary>
+        /// <returns></returns>
         public List<HuurContract> GetHuurContracten()
         {
             List<HuurContract> huurcontracten = DatabaseManager.GetHuurContracten();
@@ -62,21 +101,41 @@ namespace HuurAdministratie.Models
             return huurcontracten;
         }
 
+        /// <summary>
+        /// Geeft de huurder van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Huurder GetHuurderFromContract(int id)
         {
             return DatabaseManager.GetHuurderFromContract(id);
         }
 
+        /// <summary>
+        /// Geeft alle artikelen van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public List<Artikel> GetArtikelsFromContract(int id)
         {
             return DatabaseManager.GetArtikelFromContract(id);
         }
 
+        /// <summary>
+        /// Geeft de boot van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Boot GetBootFromContract(int id)
         {
             return DatabaseManager.GetBootFromContract(id);
         }
-
+        
+        /// <summary>
+        /// Geeft alle vaargebieden van een contract
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public List<Vaargebied> GetVaargebiedFromContract(int id)
         {
             return DatabaseManager.GetVaargebiedFromContract(id);
@@ -96,120 +155,16 @@ namespace HuurAdministratie.Models
         /// <returns></returns>
         public bool AddHuurcontract(DateTime beginDatum, DateTime eindDatum, double bedrag, List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot, string naam, string email)
         {
-            int aantalMeren = CheckBudget(bedrag, vaargebieden, artikelen, boot);
+            HuurContract newHuurContract = new HuurContract(beginDatum, eindDatum, artikelen, vaargebieden, boot);
+            int aantalMeren = newHuurContract.CheckBudget(bedrag);
             if (aantalMeren != -1)
             {
-                double teBetalen = PriceCheck(vaargebieden, artikelen, boot, aantalMeren);
-                HuurContract newHuurContract = new HuurContract(HuurContract.highestId + 1, beginDatum, eindDatum,
+                double teBetalen = newHuurContract.PriceCheck();
+                 newHuurContract = new HuurContract(HuurContract.highestId + 1, beginDatum, eindDatum,
                     aantalMeren, teBetalen, artikelen, new Huurder(Huurder.HighestId + 1, naam, email), vaargebieden, boot);
-                bool succes = true;
-                if (!DatabaseManager.AddHuurder(newHuurContract))
-                    succes = false;
-                if (!DatabaseManager.AddHuurcontract(newHuurContract))
-                    succes = false;
-                foreach (Vaargebied vg in vaargebieden)
-                {
-                    if (!DatabaseManager.AddVaargebiedToContract(newHuurContract, vg.Id))
-                        succes = false;
-                }
-                foreach (Artikel a in artikelen)
-                {
-                    if (!DatabaseManager.AddArtikelenToContract(newHuurContract, a.Id))
-                        succes = false;
-                }
-                return succes;
+                return DatabaseManager.AddFullContract(newHuurContract);
             }
             return false;
-        }
-
-        /// <summary>
-        /// Geeft de daadwerkelijke prijs die je moet betalen
-        /// </summary>
-        /// <param name="vaargebieden"></param>
-        /// <param name="artikelen"></param>
-        /// <param name="boot"></param>
-        /// <param name="aantalMeren"></param>
-        /// <returns></returns>
-        public double PriceCheck(List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot, int aantalMeren)
-        {
-            double hasToPay = 0;
-            int amountOfMeren = 0;
-            hasToPay += vaargebieden.Count * 2;
-            hasToPay += artikelen.Count * 1.25;
-            hasToPay += boot.Prijs;
-            hasToPay += aantalMeren*1;
-            if (aantalMeren > 4)
-            {
-                hasToPay += 0.50;
-                if (aantalMeren > 10)
-                {
-                    hasToPay += 0.50;
-                }
-            }
-            return hasToPay;
-        }
-
-        /// <summary>
-        /// Geeft het aantal meren terug wat je kunt betalen
-        /// </summary>
-        /// <param name="bedrag"></param>
-        /// <param name="vaargebieden"></param>
-        /// <param name="artikelen"></param>
-        /// <param name="boot"></param>
-        /// <returns>Als het -1 is betekend dat je niet genoeg heb om je andere spullen te betalen</returns>
-        public int CheckBudget(double bedrag, List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot)
-        {
-            double hasToPay = 0;
-            int amountOfMeren = 0;
-            hasToPay += vaargebieden.Count*2;
-            hasToPay += artikelen.Count*1.25;
-            hasToPay += boot.Prijs;
-            if (bedrag - hasToPay > 0)
-            {
-                while (bedrag - hasToPay > 0 && amountOfMeren < 13)
-                {
-                    hasToPay += 1;
-                    if (amountOfMeren%5 == 0)
-                    {
-                        if (boot.Soort != "Kano")
-                        {
-                            hasToPay += 0.50;
-                        }
-                    }
-                    amountOfMeren++;
-                }
-                amountOfMeren--;
-            }
-            else
-            {
-                return -1;
-            }
-            return amountOfMeren;
-        }
-
-        public void Exporteer(string path, HuurContract contract)
-        {
-
-            using (StreamWriter stream = new StreamWriter(path + "/contract.txt"))
-            {
-                stream.WriteLine("Naam:" + contract.Huurder.Naam);
-                stream.WriteLine("Email: " + contract.Huurder.EmailAdres);
-                stream.WriteLine("Prijs: " + contract.Bedrag);
-                stream.WriteLine("Datumbegin: " + contract.BeginDatum);
-                stream.WriteLine("Datumeind: " + contract.EindDatum);
-                stream.WriteLine("Boot:" + contract.Boot.Naam + " " + contract.Boot.Soort + " " + contract.Boot.Type);
-                stream.WriteLine("Aantal meren: " + contract.AantalMeren);
-                stream.WriteLine("Gehuurd:");
-                foreach (Artikel a in contract.Artikelen)
-                {
-                    stream.WriteLine(a.Naam + " " + a.Prijs); 
-                }
-                stream.WriteLine("Vaargebied:");
-                foreach (Vaargebied vg in contract.BevaardeGebieden)
-                {
-                    stream.WriteLine(vg.Naam);
-                }
-            }
         }
     }
 }

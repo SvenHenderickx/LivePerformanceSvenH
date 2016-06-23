@@ -237,7 +237,7 @@
             // 
             // tbBudget
             // 
-            this.tbBudget.Location = new System.Drawing.Point(213, 284);
+            this.tbBudget.Location = new System.Drawing.Point(213, 286);
             this.tbBudget.Name = "tbBudget";
             this.tbBudget.Size = new System.Drawing.Size(100, 20);
             this.tbBudget.TabIndex = 27;

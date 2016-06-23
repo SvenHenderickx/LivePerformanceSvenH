@@ -21,7 +21,8 @@ namespace HuurAdministratie.GUI
         public NewContract()
         {
             InitializeComponent();
-            bedrijf = new Bedrijf();
+            bedrijf = Bedrijf.Instance;
+            bedrijf.GetAllForBedrijf();
             chosenBoot = null;
             chosenArtikels = new List<Artikel>();
             chosenVaargebied = new List<Vaargebied>();
@@ -37,17 +38,14 @@ namespace HuurAdministratie.GUI
         {
             if (CheckBudgetInput())
             {
-                if (
-                    bedrijf.CheckBudget(Convert.ToDouble(tbBudget.Text), chosenVaargebied, chosenArtikels, chosenBoot) ==
-                    -1)
+                HuurContract checkHuurBudget = new HuurContract(dtpBeginDatum.Value, dtpEindDatum.Value, chosenArtikels, chosenVaargebied, chosenBoot);
+                if (checkHuurBudget.CheckBudget(Convert.ToDouble(tbBudget.Text)) == -1)
                 {
                     MessageBox.Show("Niet genoeg budget voor te huren");
                 }
                 else
                 {
-                    lblAantalMeren.Text =
-                        Convert.ToString(bedrijf.CheckBudget(Convert.ToDouble(tbBudget.Text), chosenVaargebied,
-                            chosenArtikels, chosenBoot));
+                    lblAantalMeren.Text = Convert.ToString(checkHuurBudget.CheckBudget(Convert.ToDouble(tbBudget.Text)));
                 }
             }
         }
