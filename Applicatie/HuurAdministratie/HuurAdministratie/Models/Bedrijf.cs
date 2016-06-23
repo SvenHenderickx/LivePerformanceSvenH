@@ -23,9 +23,29 @@ namespace HuurAdministratie.Models
 
         public List<Account> Accounts { get; private set; }
 
+        public List<Vaargebied> Vaargebieden { get; private set; }
+
         public Bedrijf()
         {
             HuurContracten = GetHuurContracten();
+            Artikelen = GetArtikelen();
+            Boten = GetBoten();
+            Vaargebieden = GetVaargebieden();
+        }
+
+        public List<Vaargebied> GetVaargebieden()
+        {
+            return DatabaseManager.GetAllVaargebieden();
+        }
+
+        public List<Artikel> GetArtikelen()
+        {
+            return DatabaseManager.GetAllArtikelen();
+        }
+
+        public List<Boot> GetBoten()
+        {
+            return DatabaseManager.GetAlleBoten();
         }
 
         public List<HuurContract> GetHuurContracten()

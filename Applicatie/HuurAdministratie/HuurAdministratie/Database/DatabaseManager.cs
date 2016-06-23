@@ -267,5 +267,93 @@ namespace HuurAdministratie
                 _Connection.Close();
             }
         }
+
+        internal static List<Artikel> GetAllArtikelen()
+        {
+            List<Artikel> tempList = new List<Artikel>();
+            try
+            {
+                OracleCommand command = CreateOracleCommand("SELECT * FROM Artikelen");
+                OracleDataReader reader = ExecuteQuery(command);
+
+                while (reader.Read())
+                {
+                    int id = Convert.ToInt32(reader["id"]);
+                    string naam = Convert.ToString(reader["naam"]);
+                    double prijs = Convert.ToDouble(reader["prijs"]);
+                    tempList.Add(new Artikel(id, naam, prijs));
+                }
+                return tempList;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
+
+        internal static List<Boot> GetAlleBoten()
+        {
+            List<Boot> tempList = new List<Boot>();
+            try
+            {
+                OracleCommand command = CreateOracleCommand("SELECT boot.naam, boot.type, boot.soort, motor.bootnaam as motornaam, motor.tankinhoud, spierkrachtaangedreven.bootnaam as spiernaam FROM Boot LEFT JOIN Motor ON boot.naam = motor.bootnaam LEFT JOIN Spierkrachtaangedreven ON boot.naam = spierkrachtaangedreven.bootnaam");
+                OracleDataReader reader = ExecuteQuery(command);
+
+                while (reader.Read())
+                {
+                    string naam = Convert.ToString(reader["naam"]);
+                    string type = Convert.ToString(reader["type"]);
+                    string soort = Convert.ToString(reader["soort"]);
+                    if (reader["motornaam"] != DBNull.Value)
+                    {
+                        int tankInhoud = Convert.ToInt32(reader["tankinhoud"]);
+                        tempList.Add(new Motor(naam, type, soort, 15.00, tankInhoud));
+                    }
+                    else
+                    {
+                        tempList.Add(new Spierkrachtaangedreven(naam, type, soort, 10.00));
+                    }
+                }
+                return tempList;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
+
+        internal static List<Vaargebied> GetAllVaargebieden()
+        {
+            List<Vaargebied> tempList = new List<Vaargebied>();
+            try
+            {
+                OracleCommand command = CreateOracleCommand("SELECT * FROM Vaargebied");
+                OracleDataReader reader = ExecuteQuery(command);
+
+                while (reader.Read())
+                {
+                    int id = Convert.ToInt32(reader["id"]);
+                    string naam = Convert.ToString(reader["naam"]);
+                    tempList.Add(new Vaargebied(id, naam));
+                }
+                return tempList;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                _Connection.Close();
+            }
+        }
     }
 }
