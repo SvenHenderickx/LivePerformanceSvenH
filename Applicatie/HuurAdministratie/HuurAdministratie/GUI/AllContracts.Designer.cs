@@ -40,6 +40,7 @@
             this.lblBootsoort = new System.Windows.Forms.Label();
             this.lblActieradius = new System.Windows.Forms.Label();
             this.lbVaargebieden = new System.Windows.Forms.ListBox();
+            this.btnExporteer = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lbContracts
@@ -148,11 +149,22 @@
             this.lbVaargebieden.Size = new System.Drawing.Size(265, 56);
             this.lbVaargebieden.TabIndex = 11;
             // 
+            // btnExporteer
+            // 
+            this.btnExporteer.Location = new System.Drawing.Point(195, 308);
+            this.btnExporteer.Name = "btnExporteer";
+            this.btnExporteer.Size = new System.Drawing.Size(75, 23);
+            this.btnExporteer.TabIndex = 12;
+            this.btnExporteer.Text = "Exporteer";
+            this.btnExporteer.UseVisualStyleBackColor = true;
+            this.btnExporteer.Click += new System.EventHandler(this.btnExporteer_Click);
+            // 
             // AllContracts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(472, 343);
+            this.Controls.Add(this.btnExporteer);
             this.Controls.Add(this.lbVaargebieden);
             this.Controls.Add(this.lblActieradius);
             this.Controls.Add(this.lblBootsoort);
@@ -187,5 +199,6 @@
         private System.Windows.Forms.Label lblBootsoort;
         private System.Windows.Forms.Label lblActieradius;
         private System.Windows.Forms.ListBox lbVaargebieden;
+        private System.Windows.Forms.Button btnExporteer;
     }
 }

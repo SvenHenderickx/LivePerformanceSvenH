@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -184,6 +185,31 @@ namespace HuurAdministratie.Models
                 return -1;
             }
             return amountOfMeren;
+        }
+
+        public void Exporteer(string path, HuurContract contract)
+        {
+
+            using (StreamWriter stream = new StreamWriter(path + "/contract.txt"))
+            {
+                stream.WriteLine("Naam:" + contract.Huurder.Naam);
+                stream.WriteLine("Email: " + contract.Huurder.EmailAdres);
+                stream.WriteLine("Prijs: " + contract.Bedrag);
+                stream.WriteLine("Datumbegin: " + contract.BeginDatum);
+                stream.WriteLine("Datumeind: " + contract.EindDatum);
+                stream.WriteLine("Boot:" + contract.Boot.Naam + " " + contract.Boot.Soort + " " + contract.Boot.Type);
+                stream.WriteLine("Aantal meren: " + contract.AantalMeren);
+                stream.WriteLine("Gehuurd:");
+                foreach (Artikel a in contract.Artikelen)
+                {
+                    stream.WriteLine(a.Naam + " " + a.Prijs); 
+                }
+                stream.WriteLine("Vaargebied:");
+                foreach (Vaargebied vg in contract.BevaardeGebieden)
+                {
+                    stream.WriteLine(vg.Naam);
+                }
+            }
         }
     }
 }

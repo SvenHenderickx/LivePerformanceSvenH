@@ -82,5 +82,16 @@ namespace HuurAdministratie.GUI
             beginForm.Show();
             this.Close();
         }
+
+        private void btnExporteer_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog opd = new FolderBrowserDialog())
+            {
+                if (opd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    bedrijf.Exporteer(opd.SelectedPath, bedrijf.HuurContracten[lbContracts.SelectedIndex]);
+                }
+            }
+        }
     }
 }
