@@ -80,5 +80,36 @@ namespace HuurAdministratie.Models
         {
             return DatabaseManager.GetVaargebiedFromContract(id);
         }
+
+        public void AddHuurcontract()
+        {
+            
+        }
+
+        public int CheckBudget(double bedrag, List<Vaargebied> vaargebieden, List<Artikel> artikelen, Boot boot)
+        {
+            double hasToPay = 0;
+            int amountOfMeren = 0;
+            hasToPay += vaargebieden.Count*2;
+            hasToPay += artikelen.Count*1.25;
+            hasToPay += boot.Prijs;
+            if (bedrag - hasToPay > 0)
+            {
+                while (bedrag - hasToPay > 0 && amountOfMeren < 13)
+                {
+                    hasToPay += 1;
+                    if (amountOfMeren%5 == 0)
+                    {
+                        if (boot.Soort != "Kano")
+                        {
+                            hasToPay += 0.50;
+                        }
+                    }
+                    amountOfMeren++;
+                }
+                amountOfMeren--;
+            }
+            return amountOfMeren;
+        }
     }
 }

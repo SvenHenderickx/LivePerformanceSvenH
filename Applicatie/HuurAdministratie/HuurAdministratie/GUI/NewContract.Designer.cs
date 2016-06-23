@@ -40,19 +40,17 @@
             this.lbArtikelen = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.btnAddArtikel = new System.Windows.Forms.Button();
             this.btnAddVaargebied = new System.Windows.Forms.Button();
             this.btnCalculateBudget = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.nmBudget = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
             this.cbBoten = new System.Windows.Forms.ComboBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnChooseBoot = new System.Windows.Forms.Button();
             this.lblBoot = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.nmBudget)).BeginInit();
+            this.tbBudget = new System.Windows.Forms.TextBox();
+            this.lblAantalMeren = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tbEmail
@@ -152,15 +150,6 @@
             this.label4.TabIndex = 12;
             this.label4.Text = "Vaargebieden";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 136);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(70, 13);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Aantal Meren";
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -187,6 +176,7 @@
             this.btnAddArtikel.TabIndex = 17;
             this.btnAddArtikel.Text = "Toevoegen";
             this.btnAddArtikel.UseVisualStyleBackColor = true;
+            this.btnAddArtikel.Click += new System.EventHandler(this.btnAddArtikel_Click);
             // 
             // btnAddVaargebied
             // 
@@ -196,6 +186,7 @@
             this.btnAddVaargebied.TabIndex = 18;
             this.btnAddVaargebied.Text = "Toevoegen";
             this.btnAddVaargebied.UseVisualStyleBackColor = true;
+            this.btnAddVaargebied.Click += new System.EventHandler(this.btnAddVaargebied_Click);
             // 
             // btnCalculateBudget
             // 
@@ -215,22 +206,7 @@
             this.button4.TabIndex = 21;
             this.button4.Text = "Accepteer";
             this.button4.UseVisualStyleBackColor = true;
-            // 
-            // nmBudget
-            // 
-            this.nmBudget.Location = new System.Drawing.Point(238, 260);
-            this.nmBudget.Name = "nmBudget";
-            this.nmBudget.Size = new System.Drawing.Size(120, 20);
-            this.nmBudget.TabIndex = 22;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(86, 136);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(35, 13);
-            this.label9.TabIndex = 23;
-            this.label9.Text = "label9";
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // cbBoten
             // 
@@ -240,14 +216,15 @@
             this.cbBoten.Size = new System.Drawing.Size(121, 21);
             this.cbBoten.TabIndex = 24;
             // 
-            // button3
+            // btnChooseBoot
             // 
-            this.button3.Location = new System.Drawing.Point(132, 175);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 25;
-            this.button3.Text = "Kies";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnChooseBoot.Location = new System.Drawing.Point(132, 175);
+            this.btnChooseBoot.Name = "btnChooseBoot";
+            this.btnChooseBoot.Size = new System.Drawing.Size(75, 23);
+            this.btnChooseBoot.TabIndex = 25;
+            this.btnChooseBoot.Text = "Kies";
+            this.btnChooseBoot.UseVisualStyleBackColor = true;
+            this.btnChooseBoot.Click += new System.EventHandler(this.btnChooseBoot_Click);
             // 
             // lblBoot
             // 
@@ -258,23 +235,38 @@
             this.lblBoot.TabIndex = 26;
             this.lblBoot.Text = "Boot";
             // 
+            // tbBudget
+            // 
+            this.tbBudget.Location = new System.Drawing.Point(213, 284);
+            this.tbBudget.Name = "tbBudget";
+            this.tbBudget.Size = new System.Drawing.Size(100, 20);
+            this.tbBudget.TabIndex = 27;
+            // 
+            // lblAantalMeren
+            // 
+            this.lblAantalMeren.AutoSize = true;
+            this.lblAantalMeren.Location = new System.Drawing.Point(276, 257);
+            this.lblAantalMeren.Name = "lblAantalMeren";
+            this.lblAantalMeren.Size = new System.Drawing.Size(35, 13);
+            this.lblAantalMeren.TabIndex = 28;
+            this.lblAantalMeren.Text = "label5";
+            // 
             // NewContract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(408, 359);
+            this.Controls.Add(this.lblAantalMeren);
+            this.Controls.Add(this.tbBudget);
             this.Controls.Add(this.lblBoot);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnChooseBoot);
             this.Controls.Add(this.cbBoten);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.nmBudget);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.btnCalculateBudget);
             this.Controls.Add(this.btnAddVaargebied);
             this.Controls.Add(this.btnAddArtikel);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lbArtikelen);
@@ -289,7 +281,6 @@
             this.Controls.Add(this.tbEmail);
             this.Name = "NewContract";
             this.Load += new System.EventHandler(this.NewContract_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.nmBudget)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,17 +300,16 @@
         private System.Windows.Forms.ListBox lbArtikelen;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnAddArtikel;
         private System.Windows.Forms.Button btnAddVaargebied;
         private System.Windows.Forms.Button btnCalculateBudget;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.NumericUpDown nmBudget;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cbBoten;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnChooseBoot;
         private System.Windows.Forms.Label lblBoot;
+        private System.Windows.Forms.TextBox tbBudget;
+        private System.Windows.Forms.Label lblAantalMeren;
     }
 }

@@ -14,10 +14,17 @@ namespace HuurAdministratie.GUI
     public partial class NewContract : Form
     {
         private Bedrijf bedrijf;
+        private Boot chosenBoot;
+        private List<Artikel> chosenArtikels;
+        private List<Vaargebied> chosenVaargebied;
+
         public NewContract()
         {
             InitializeComponent();
             bedrijf = new Bedrijf();
+            chosenBoot = null;
+            chosenArtikels = new List<Artikel>();
+            chosenVaargebied = new List<Vaargebied>();
             GetInfo();
         }
 
@@ -28,7 +35,26 @@ namespace HuurAdministratie.GUI
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (CheckBudgetInput())
+            {
+                lblAantalMeren.Text = Convert.ToString(bedrijf.CheckBudget(Convert.ToDouble(tbBudget.Text), chosenVaargebied, chosenArtikels, chosenBoot));
+            }
+        }
 
+        private bool CheckBudgetInput()
+        {
+            double budget;
+            if (double.TryParse(tbBudget.Text, out budget))
+            {
+                if (dtpBeginDatum.Value >= DateTime.Today || dtpEindDatum.Value >= DateTime.Today)
+                {
+                    if (chosenBoot != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private void NewContract_Load(object sender, EventArgs e)
@@ -40,6 +66,8 @@ namespace HuurAdministratie.GUI
         {
             cbVaargebieden.Items.Clear();
             cbArtikelen.Items.Clear();
+            lbArtikelen.Items.Clear();
+            lbVaargebieden.Items.Clear();
             cbBoten.Items.Clear();
             
             foreach (Boot b in bedrijf.Boten)
@@ -54,9 +82,113 @@ namespace HuurAdministratie.GUI
             {
                 cbVaargebieden.Items.Add(vg.Naam);
             }
+
+            foreach (Vaargebied vg in chosenVaargebied)
+            {
+                lbVaargebieden.Items.Add(vg.Naam);
+            }
+            foreach (Artikel a in chosenArtikels)
+            {
+                lbArtikelen.Items.Add(a.Naam);
+            }
+
             cbArtikelen.SelectedIndex = 0;
             cbBoten.SelectedIndex = 0;
             cbVaargebieden.SelectedIndex = 0;
+
+        }
+
+        private void btnChooseBoot_Click(object sender, EventArgs e)
+        {
+            if (cbBoten.SelectedIndex >= 0)
+            {
+                foreach (Boot b in bedrijf.Boten)
+                {
+                    if (b.Naam == cbBoten.SelectedItem.ToString())
+                    {
+                        chosenBoot = b;
+                        lblBoot.Text = b.Naam;
+                    }
+                }
+            }
+        }
+
+        private void btnAddVaargebied_Click(object sender, EventArgs e)
+        {
+            if (cbVaargebieden.SelectedIndex >= 0)
+            {
+                foreach (Vaargebied vg in bedrijf.Vaargebieden)
+                {
+                    if (vg.Naam == cbVaargebieden.SelectedItem.ToString())
+                    {
+                        foreach (Vaargebied vgd in chosenVaargebied)
+                        {
+                            if (vgd.Naam == vg.Naam)
+                            {
+                                MessageBox.Show("Deze is al toegevoegd");
+                                return;
+                            }
+                        }
+                        chosenVaargebied.Add(vg);
+                        GetInfo();
+                    }
+                }
+            }
+        }
+
+        private void btnAddArtikel_Click(object sender, EventArgs e)
+        {
+            if (cbArtikelen.SelectedIndex >= 0)
+            {
+                foreach (Artikel a in bedrijf.Artikelen)
+                {
+                    if (a.Naam == cbArtikelen.SelectedItem.ToString())
+                    {
+                        foreach (Artikel al in chosenArtikels)
+                        {
+                            if (al.Naam == a.Naam)
+                            {
+                                MessageBox.Show("Deze is al toegevoegd");
+                                return;
+                            }
+                        }
+                        chosenArtikels.Add(a);
+                        GetInfo();
+                    }
+                }
+            }
+        }
+
+        private void nmBudget_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            CheckAllInput();
+        }
+
+        private bool CheckAllInput()
+        {
+            double budget;
+            if (double.TryParse(tbBudget.Text, out budget))
+            {
+                if (dtpBeginDatum.Value >= DateTime.Today || dtpEindDatum.Value >= DateTime.Today)
+                {
+                    if (chosenBoot != null)
+                    {
+                        if (chosenBoot is Spierkrachtaangedreven)
+                        {
+                            if (chosenVaargebied.Count == 0)
+                            {
+                                
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
